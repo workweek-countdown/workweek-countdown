@@ -1,0 +1,16 @@
+.countdown
+  display: flex
+  flex-flow: row nowrap
+  font-size: 80px
+
+  &_part
+    &:before
+      content: ":"
+      padding: 5px
+
+    &:first-of-type
+      padding-left: 0
+      margin-left: 0
+
+      &:before
+        display: none

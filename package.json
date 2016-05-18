@@ -1,0 +1,27 @@
+{
+  "name": "weekend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "webpack",
+    "template": "jade src/templates/weekend.jade --out dist",
+    "watch-build": "npm run build -- --watch",
+    "watch-template": "npm run template -- --watch",
+    "watch": "npm run watch-build & npm run watch-template"
+  },
+  "author": "Alexey Volodkin",
+  "license": "MIT",
+  "devDependencies": {
+    "css-loader": "^0.23.1",
+    "elm-webpack-loader": "^3.0.1",
+    "jade": "^1.11.0",
+    "node-sass": "^3.7.0",
+    "sass-loader": "^3.2.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.0"
+  },
+  "dependencies": {
+    "normalize.css": "^4.1.1"
+  }
+}
