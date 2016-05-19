@@ -11,6 +11,7 @@ module.exports = {
     extensions: ['', '.js', '.elm']
   },
   module: {
+    noParse: /\.elm$/,
     loaders: [
       {
         test: /\.sass$/,
