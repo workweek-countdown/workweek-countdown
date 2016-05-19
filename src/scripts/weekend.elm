@@ -3,6 +3,7 @@ module Weekend exposing (main)
 import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
+import String as S
 import Date as D
 import Time as T
 import Date.Extra.Floor as DEF
@@ -75,13 +76,16 @@ countdownView date =
     delta = DEP.diff date (weekendStart date)
   in
     div [ class "countdown" ]
-      [ countdownPartView (delta.day + 1)
-      , countdownPartView (23 - delta.hour)
-      , countdownPartView (59 - delta.minute)
-      , countdownPartView (59 - delta.second)
-      , countdownPartView (1000 - delta.millisecond)
+      [ countdownPartView (delta.day + 1) 1
+      , countdownPartView (23 - delta.hour) 2
+      , countdownPartView (59 - delta.minute) 2
+      , countdownPartView (59 - delta.second) 2
+      , countdownPartView (1000 - delta.millisecond) 3
       ]
 
-countdownPartView : Int -> Html Msg
-countdownPartView left =
-  div [ class "countdown_part" ] [ text (toString left) ]
+countdownPartView : Int -> Int -> Html Msg
+countdownPartView left digitsCount =
+  let
+    content = S.padLeft digitsCount '0' (toString left)
+  in
+    div [ class "countdown_part" ] [ text content ]
