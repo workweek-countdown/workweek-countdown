@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import String as S
 import Date as D
 import Time as T
+import Date.Extra.Core as DEC
 import Date.Extra.Floor as DEF
 import Date.Extra.Period as DEP
 
@@ -52,8 +53,8 @@ shiftToFriday date =
   let
     newDate = DEP.add DEP.Day 1 date
   in
-    case D.dayOfWeek newDate of
-      D.Fri -> newDate
+    case D.dayOfWeek date of
+      D.Fri -> date
       _ -> shiftToFriday newDate
 
 weekendStart : D.Date -> D.Date
@@ -73,14 +74,19 @@ view model =
 countdownView : D.Date -> Html Msg
 countdownView date =
   let
-    delta = DEP.diff date (weekendStart date)
+    left = (D.toTime (weekendStart date)) - (D.toTime date) |> truncate
+    daysLeft = left // DEC.ticksADay
+    hoursLeft = left % DEC.ticksADay // DEC.ticksAnHour
+    minutesLeft = left % DEC.ticksAnHour // DEC.ticksAMinute
+    secondsLeft = left % DEC.ticksAMinute // DEC.ticksASecond
+    millisecondsLeft = left % DEC.ticksASecond
   in
     div [ class "countdown" ]
-      [ countdownPartView (delta.day + 1) 1
-      , countdownPartView (23 - delta.hour) 2
-      , countdownPartView (59 - delta.minute) 2
-      , countdownPartView (59 - delta.second) 2
-      , countdownPartView (1000 - delta.millisecond) 3
+      [ countdownPartView daysLeft 1
+      , countdownPartView hoursLeft 2
+      , countdownPartView minutesLeft 2
+      , countdownPartView secondsLeft 2
+      , countdownPartView millisecondsLeft 3
       ]
 
 countdownPartView : Int -> Int -> Html Msg
