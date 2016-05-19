@@ -5,6 +5,8 @@ import Html.App as App
 import Html.Attributes exposing (..)
 import Date as D
 import Time as T
+import Date.Extra.Floor as DEF
+import Date.Extra.Period as DEP
 
 main =
   App.program
@@ -15,12 +17,12 @@ main =
     }
 
 type alias Model =
-  { time : T.Time
+  { date : D.Date
   }
 
 init : (Model, Cmd Msg)
 init =
-  (Model 0, Cmd.none)
+  (Model (D.fromTime 0), Cmd.none)
 
 type Msg
   = Tick T.Time
@@ -29,65 +31,55 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update action model =
   case action of
     Tick newTime ->
-      ({ model | time = newTime }, Cmd.none)
+      let
+        newDate = D.fromTime newTime
+      in
+        ({ model | date = newDate }, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
   T.every (10 * T.millisecond) Tick
 
-millisecondsInWeek : T.Time
-millisecondsInWeek = 604800000
-
-weekendStartHour : Float
+weekendStartHour : Int
 weekendStartHour = 19
 
-weekendStartMinute : Float
+weekendStartMinute : Int
 weekendStartMinute = 0
 
-daysTillFriday : D.Day -> Int
-daysTillFriday day =
-  case day of
-    D.Thu -> 1
-    D.Fri -> 1
-    _ -> 8
-
-weekendStart : T.Time -> T.Time
-weekendStart time =
+shiftToFriday : D.Date -> D.Date
+shiftToFriday date =
   let
-    totalWeeks = time / millisecondsInWeek |> floor |> toFloat
-    daysLeft = time |> D.fromTime |> D.dayOfWeek |> daysTillFriday |> toFloat
+    newDate = DEP.add DEP.Day 1 date
   in
-    totalWeeks * millisecondsInWeek
-      + daysLeft * 24 * T.hour
-      + weekendStartHour * T.hour
-      + weekendStartMinute * T.minute
+    case D.dayOfWeek newDate of
+      D.Fri -> newDate
+      _ -> shiftToFriday newDate
 
-tillWeekend : T.Time -> T.Time
-tillWeekend time =
-  (weekendStart time) - time
+weekendStart : D.Date -> D.Date
+weekendStart date =
+  date
+    |> shiftToFriday
+    |> DEF.floor DEF.Day
+    |> DEP.add DEP.Hour weekendStartHour
+    |> DEP.add DEP.Minute weekendStartMinute
 
 view : Model -> Html Msg
 view model =
   div [ class "layout" ]
-    [ div [ class "layout_body" ] [ countdownView model.time ]
+    [ div [ class "layout_body" ] [ countdownView model.date ]
     ]
 
-countdownView : T.Time -> Html Msg
-countdownView time =
+countdownView : D.Date -> Html Msg
+countdownView date =
   let
-    left = tillWeekend time |> truncate
-    daysLeft = left // (truncate (24 * T.hour))
-    hoursLeft = left % (truncate (24 * T.hour)) // (truncate T.hour)
-    minutesLeft = left % (truncate T.hour) // (truncate T.minute)
-    secondsLeft = left % (truncate T.minute) // (truncate T.second)
-    millisecondsLeft = left % (truncate T.second)
+    delta = DEP.diff date (weekendStart date)
   in
     div [ class "countdown" ]
-      [ countdownPartView daysLeft
-      , countdownPartView hoursLeft
-      , countdownPartView minutesLeft
-      , countdownPartView secondsLeft
-      , countdownPartView millisecondsLeft
+      [ countdownPartView (delta.day + 1)
+      , countdownPartView (23 - delta.hour)
+      , countdownPartView (59 - delta.minute)
+      , countdownPartView (59 - delta.second)
+      , countdownPartView (1000 - delta.millisecond)
       ]
 
 countdownPartView : Int -> Html Msg
