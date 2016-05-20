@@ -40,7 +40,7 @@ update action model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  T.every (10 * T.millisecond) Tick
+  T.every T.millisecond Tick
 
 weekendStartHour : Int
 weekendStartHour = 19
