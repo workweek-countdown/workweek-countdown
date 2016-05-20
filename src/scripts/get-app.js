@@ -1,4 +1,4 @@
-const { Weekend } = require('./weekend.elm')
+const { Weekend } = require('./Weekend.elm')
 
 let app = null
 
