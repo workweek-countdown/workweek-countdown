@@ -1,8 +1,20 @@
 const path = require('path')
 const webpack = require('webpack')
 
+isProduction = process.env.NODE_ENV == 'production'
+
+const entry = ['./src/index.js']
+if (!isProduction) {
+  entry.unshift('webpack-dev-server/client?http://localhost:8080', 'webpack/hot/dev-server')
+}
+
+const plugins = []
+if (!isProduction) {
+  plugins.push(new webpack.HotModuleReplacementPlugin())
+}
+
 module.exports = {
-  entry: './src/index.js',
+  entry,
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js'
@@ -23,5 +35,6 @@ module.exports = {
         loaders: ['elm-webpack']
       }
     ]
-  }
+  },
+  plugins
 }
