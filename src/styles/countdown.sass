@@ -1,17 +1,44 @@
 .countdown
   display: flex
   flex-flow: row nowrap
-  font-family: monospace
-  font-size: 80px
+  +title
 
   &_part
-    &:before
+    position: relative
+    &::before
       content: ":"
       padding: 5px
+
+    &::after
+      position: absolute
+      top: -5px
+      left: 0
+      font-size: 12px
+      text-shadow: 0 1px 1px white
+      color: rgba(0, 0, 0, .5)
+      text-transform: uppercase
 
     &:first-of-type
       padding-left: 0
       margin-left: 0
 
-      &:before
+      &::before
         display: none
+
+      &::after
+        content: 'Days'
+
+    &:nth-of-type(2)
+      &::after
+        content: 'Hours'
+        left: 34px
+
+    &:nth-of-type(3)
+      &::after
+        content: 'Minutes'
+        left: 34px
+
+    &:nth-of-type(4)
+      &::after
+        content: 'Seconds'
+        left: 34px

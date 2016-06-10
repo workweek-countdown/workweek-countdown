@@ -10,7 +10,7 @@ percentView : D.Date -> D.Date -> Html msg
 percentView now weekend =
   let
     left = (D.toTime weekend) - (D.toTime now)
-    percent = left / (toFloat DEC.ticksAWeek)
-    content = percent |> toString |> S.left 12 |> S.padRight 12 '0'
+    percent = left / (toFloat DEC.ticksAWeek) * 100
+    content = percent |> toString |> S.left 9 |> S.padRight 9 '0'
   in
     div [ class "percent" ] [ text content ]

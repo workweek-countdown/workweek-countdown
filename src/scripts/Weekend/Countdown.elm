@@ -21,12 +21,12 @@ countdownView now weekend =
       , countdownPartView hoursLeft 2
       , countdownPartView minutesLeft 2
       , countdownPartView secondsLeft 2
-      , countdownPartView millisecondsLeft 3
+      , countdownPartView millisecondsLeft 2
       ]
 
 countdownPartView : Int -> Int -> Html msg
 countdownPartView left digitsCount =
   let
-    content = S.padLeft digitsCount '0' (toString left)
+    content = S.padLeft digitsCount '0' <| S.slice 0 digitsCount <| toString left
   in
     div [ class "countdown_part" ] [ text content ]
