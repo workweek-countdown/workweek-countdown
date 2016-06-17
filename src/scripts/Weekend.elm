@@ -4,13 +4,13 @@ import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import List as L
+import Set as S
 import Date as D
 import Time as T
-import Date.Extra.Floor as DEF
-import Date.Extra.Period as DEP
-import Weekend.Countdown exposing (countdownView)
-import Weekend.Percent exposing (percentView)
+import Weekend.Model exposing (Model, Settings, Route(..), Mode(..))
+import Weekend.Day as WD
+import Weekend.Counter exposing (counterView)
+import Weekend.EditSettings exposing (editSettingsView)
 
 main =
   App.program
@@ -20,28 +20,31 @@ main =
     , subscriptions = subscriptions
     }
 
-type Mode
-  = Countdown
-  | Percent
-
-type alias Model =
-  { mode : Mode
-  , date : D.Date
-  }
+defaultSettings : Settings
+defaultSettings =
+  Settings Countdown (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
 
 init : (Model, Cmd Msg)
 init =
-  (Model Countdown (D.fromTime 0), Cmd.none)
+  (Model Counter defaultSettings (D.fromTime 0), Cmd.none)
 
 type Msg
-  = ChangeMode Mode
+  = ChangeRoute Route
+  | ChangeMode Mode
   | Tick T.Time
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update action model =
   case action of
+    ChangeRoute newRoute ->
+      ({ model | route = newRoute }, Cmd.none)
+
     ChangeMode newMode ->
-      ({ model | mode = newMode }, Cmd.none)
+      let
+        settings = model.settings
+        newSettings = { settings | mode = newMode }
+      in
+        ({ model | settings = newSettings }, Cmd.none)
 
     Tick newTime ->
       let
@@ -53,63 +56,26 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   T.every (10 * T.millisecond) Tick
 
-weekendStartHour : Int
-weekendStartHour = 19
-
-weekendStartMinute : Int
-weekendStartMinute = 0
-
-shiftToNextFriday : D.Date -> D.Date
-shiftToNextFriday date =
-  let
-    newDate = DEP.add DEP.Day 1 date
-  in
-    case D.dayOfWeek date of
-      D.Fri ->
-        let
-          hour = D.hour date
-          minute = D.minute date
-        in
-          if hour > weekendStartHour || (hour == weekendStartHour && minute > weekendStartMinute) then
-            DEP.add DEP.Day 7 date
-          else
-            date
-      _ -> shiftToNextFriday newDate
-
-weekendStart : D.Date -> D.Date
-weekendStart date =
-  date
-    |> shiftToNextFriday
-    |> DEF.floor DEF.Day
-    |> DEP.add DEP.Hour weekendStartHour
-    |> DEP.add DEP.Minute weekendStartMinute
-
 view : Model -> Html Msg
 view model =
   let
-    weekend = weekendStart model.date
-
-    modeView = case model.mode of
-      Countdown -> countdownView
-      Percent -> percentView
+    routeView = case model.route of
+      Counter -> counterView ChangeMode
+      EditSettings -> editSettingsView
   in
     div [ class "layout" ]
       [ div [ class "layout_body" ]
-        [ modePickerView model.mode
-        , modeView model.date weekend ]
+        [ routeView model
+        , settingsTriggerView model.route
+        ]
       ]
 
-modePickerView : Mode -> Html Msg
-modePickerView current =
+settingsTriggerView : Route -> Html Msg
+settingsTriggerView route =
   let
-    options = L.map (modePickerOptionView current) [Countdown, Percent]
+    (newRoute, content) = case route of
+      Counter -> (EditSettings, "settings")
+      EditSettings -> (Counter, "close")
   in
-    div [ class "mode-picker" ] options
-
-modePickerOptionView : Mode -> Mode -> Html Msg
-modePickerOptionView current mode =
-  let
-    classes = classList [("mode-picker_option", True), ("m-current", current == mode)]
-  in
-    div [ classes, onClick (ChangeMode mode) ]
-      [ text (toString mode) ]
+    div [ class "settings-trigger", onClick (ChangeRoute newRoute) ]
+      [ text content ]

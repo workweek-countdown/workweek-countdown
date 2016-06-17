@@ -1,12 +1,15 @@
 .countdown
+  +title
   display: flex
   flex-flow: row nowrap
-  +title
+  cursor: default
+  -webkit-user-select: none
 
   &_part
     position: relative
+
     &::before
-      content: ":"
+      content: ':'
       padding: 5px
 
     &::after
