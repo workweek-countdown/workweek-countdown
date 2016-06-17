@@ -102,7 +102,7 @@ view model =
 modePickerView : Mode -> Html Msg
 modePickerView current =
   let
-    options = L.map(modePickerOptionView current) [Countdown, Percent]
+    options = L.map (modePickerOptionView current) [Countdown, Percent]
   in
     div [ class "mode-picker" ] options
 
