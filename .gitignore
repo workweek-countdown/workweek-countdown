@@ -1,4 +1,5 @@
 /node_modules
 /elm-stuff
-/dist
+dist/index.html
+dist/main.js
 npm-debug.log

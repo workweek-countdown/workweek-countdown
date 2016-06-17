@@ -5,10 +5,10 @@
   "description": "",
   "scripts": {
     "build": "webpack",
-    "server": "node webpack-dev-server.js",
+    "watch-scripts": "webpack --watch",
     "build-template": "jade src/templates/index.jade --out dist",
     "watch-template": "npm run build-template -- --watch",
-    "dev": "npm run server & npm run watch-template"
+    "dev": "npm run watch-scripts & npm run watch-template"
   },
   "author": "Alexey Volodkin",
   "license": "MIT",
