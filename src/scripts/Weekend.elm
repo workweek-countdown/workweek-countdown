@@ -7,8 +7,9 @@ import Html.Events exposing (..)
 import Set as S
 import Date as D
 import Time as T
-import Weekend.Model exposing (Model, Settings, Route(..), Mode(..))
-import Weekend.Day as WD exposing (Day)
+import Weekend.Model exposing (Model, Route(..), Mode(..))
+import Weekend.Msg exposing (Msg(..))
+import Weekend.Day as WD
 import Weekend.Counter exposing (counterView)
 import Weekend.EditSettings exposing (editSettingsView)
 
@@ -20,41 +21,43 @@ main =
     , subscriptions = subscriptions
     }
 
-defaultSettings : Settings
-defaultSettings =
-  Settings Countdown "en" (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
+defaultModel : Model
+defaultModel =
+  Model Counter Countdown "en" (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri]) 9 0 18 0 (D.fromTime 0)
 
 init : (Model, Cmd Msg)
 init =
-  (Model Counter defaultSettings (D.fromTime 0), Cmd.none)
-
-type Msg
-  = ChangeRoute Route
-  | ChangeMode Mode
-  | TriggerDay Day
-  | Tick T.Time
+  (defaultModel, Cmd.none)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update action model =
   case action of
+    None ->
+      (model, Cmd.none)
+
     ChangeRoute newRoute ->
       ({ model | route = newRoute }, Cmd.none)
 
     ChangeMode newMode ->
-      let
-        { settings } = model
-        newSettings = { settings | mode = newMode }
-      in
-        ({ model | settings = newSettings }, Cmd.none)
+      ({ model | mode = newMode }, Cmd.none)
 
-    TriggerDay day ->
+    TriggerWorkingDay day ->
       let
-        { settings } = model
-        { days } = settings
-        newDays = (if S.member day days then S.remove else S.insert) day days
-        newSettings = { settings | days = newDays }
+        newWorkingDays = (if S.member day model.workingDays then S.remove else S.insert) day model.workingDays
       in
-        ({ model | settings = newSettings }, Cmd.none)
+        ({ model | workingDays = newWorkingDays }, Cmd.none)
+
+    ChangeStartHour newStartHour ->
+      ({ model | startHour = newStartHour }, Cmd.none)
+
+    ChangeEndHour newEndHour ->
+      ({ model | endHour = newEndHour }, Cmd.none)
+
+    ChangeStartMinute newStartMinute ->
+      ({ model | startMinute = newStartMinute }, Cmd.none)
+
+    ChangeEndMinute newEndMinute ->
+      ({ model | endMinute = newEndMinute }, Cmd.none)
 
     Tick newTime ->
       let
@@ -70,8 +73,8 @@ view : Model -> Html Msg
 view model =
   let
     routeView = case model.route of
-      Counter -> counterView ChangeMode
-      EditSettings -> editSettingsView TriggerDay
+      Counter -> counterView
+      EditSettings -> editSettingsView
   in
     div [ class "layout" ]
       [ div [ class "layout_body" ]

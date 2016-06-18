@@ -3,31 +3,54 @@ module Weekend.EditSettings exposing (editSettingsView)
 import List as L
 import Set as S
 import Date as D
+import String as St
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Weekend.Model exposing (Model)
+import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD exposing (Day)
 import Weekend.I18n exposing (t)
 
-editSettingsView : (Day -> msg) -> Model -> Html msg
-editSettingsView triggerDay model =
+editSettingsView : Model -> Html Msg
+editSettingsView model =
   div [ class "settings" ]
-    [ workingDaysView model.settings.lang triggerDay model.settings.days
+    [ workingTimesView model
+    , workingDaysView model.lang model.workingDays
     ]
 
-workingDaysView : String -> (Day -> msg) -> S.Set Day -> Html msg
-workingDaysView lang triggerDay days =
+workingTimesView : Model -> Html Msg
+workingTimesView model =
   let
-    dayView = \day -> workingDayView lang triggerDay day (S.member day days)
+    parseInput handler min max input =
+      case St.toInt input of
+        Ok value ->
+          if value >= min && value <= max then handler value else None
+        Err _ -> None
+  in
+    div [ class "settings_working-time" ]
+      [ workingTimeView (parseInput ChangeStartHour 0 59)
+      , workingTimeView (parseInput ChangeEndHour 0 59)
+      , workingTimeView (parseInput ChangeStartMinute 0 23)
+      , workingTimeView (parseInput ChangeEndMinute 0 23)
+      ]
+
+workingTimeView : (String -> Msg) -> Html Msg
+workingTimeView inputHandler =
+  input [ type' "text", onInput inputHandler ] []
+
+workingDaysView : String -> S.Set Day -> Html Msg
+workingDaysView lang days =
+  let
+    dayView = \day -> workingDayView lang day (S.member day days)
     possibleDaysViews = L.map dayView WD.days
   in
     div [ class "settings_working-days" ] possibleDaysViews
 
-workingDayView : String -> (Day -> msg) -> Day -> Bool -> Html msg
-workingDayView lang triggerDay day active =
+workingDayView : String -> Day -> Bool -> Html Msg
+workingDayView lang day active =
   let
     dayName = t <| lang ++ ".days." ++ day
     classes = classList [("settings_working-day", True), ("m-active", active)]
   in
-    div [ classes, onClick (triggerDay day) ] [ text dayName ]
+    div [ classes, onClick (TriggerWorkingDay day) ] [ text dayName ]

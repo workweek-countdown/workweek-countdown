@@ -7,7 +7,8 @@ import Date.Extra.Period as DEP
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Weekend.Model exposing (Model, Settings, Mode(..))
+import Weekend.Model exposing (Model, Mode(..))
+import Weekend.Msg exposing (Msg(..))
 import Weekend.Countdown exposing (countdownView)
 import Weekend.Percent exposing (percentView)
 
@@ -42,30 +43,30 @@ weekendStart date =
     |> DEP.add DEP.Hour weekendStartHour
     |> DEP.add DEP.Minute weekendStartMinute
 
-counterView : (Mode -> msg) -> Model -> Html msg
-counterView changeMode model =
+counterView : Model -> Html Msg
+counterView model =
   let
     weekend = weekendStart model.date
-    modeView = case model.settings.mode of
+    modeView = case model.mode of
       Countdown -> countdownView
       Percent -> percentView
   in
     div [ class "counter" ]
       [ modeView model.date weekend
-      , modePickerView changeMode model.settings.mode
+      , modePickerView model.mode
       ]
 
-modePickerView : (Mode -> msg) -> Mode -> Html msg
-modePickerView changeMode current =
+modePickerView : Mode -> Html Msg
+modePickerView current =
   let
-    options = L.map (modePickerOptionView changeMode current) [Countdown, Percent]
+    options = L.map (modePickerOptionView current) [Countdown, Percent]
   in
     div [ class "mode-picker" ] options
 
-modePickerOptionView : (Mode -> msg) -> Mode -> Mode -> Html msg
-modePickerOptionView changeMode current mode =
+modePickerOptionView : Mode -> Mode -> Html Msg
+modePickerOptionView current mode =
   let
     classes = classList [("mode-picker_option", True), ("m-current", current == mode)]
   in
-    div [ classes, onClick (changeMode mode) ]
+    div [ classes, onClick (ChangeMode mode) ]
       [ text (toString mode) ]
