@@ -49,4 +49,5 @@ dayToDayOfWeek int =
     "thu" -> D.Thu
     "fri" -> D.Fri
     "sat" -> D.Sat
-    _ -> D.Sun
+    "sun" -> D.Sun
+    _ -> D.Mon

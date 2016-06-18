@@ -1,4 +1,4 @@
-module Weekend.Model exposing (Model, Route(..), Mode(..))
+module Weekend.Model exposing (Model, Route(..), Mode(..), Language)
 
 import Set as S
 import Date as D
@@ -12,10 +12,12 @@ type Mode
   = Countdown
   | Percent
 
+type alias Language = String
+
 type alias Model =
   { route : Route
   , mode : Mode
-  , lang: String
+  , lang: Language
   , workingDays : S.Set Day
   , startHour : Int
   , startMinute : Int

@@ -2,6 +2,7 @@ module Weekend.Msg exposing (Msg(..))
 
 import Time as T
 import Weekend.Model exposing (Route(..), Mode(..))
+import Weekend.Settings exposing (Settings)
 import Weekend.Day exposing (Day)
 
 type Msg
@@ -13,4 +14,6 @@ type Msg
   | ChangeEndHour Int
   | ChangeStartMinute Int
   | ChangeEndMinute Int
+  | ApplySettings Settings
+  | SaveSettings
   | Tick T.Time

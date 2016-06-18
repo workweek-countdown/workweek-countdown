@@ -1,13 +1,15 @@
-module Weekend exposing (main)
+port module Weekend exposing (main)
 
+import Set as S
+import Date as D
+import Time as T
+import Platform.Sub as Sub
 import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Set as S
-import Date as D
-import Time as T
 import Weekend.Model exposing (Model, Route(..), Mode(..))
+import Weekend.Settings exposing (Settings, fromModel, applySettings)
 import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD
 import Weekend.Counter exposing (counterView)
@@ -27,7 +29,7 @@ defaultModel =
 
 init : (Model, Cmd Msg)
 init =
-  (defaultModel, Cmd.none)
+  (defaultModel, loadSettings ())
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update action model =
@@ -39,7 +41,10 @@ update action model =
       ({ model | route = newRoute }, Cmd.none)
 
     ChangeMode newMode ->
-      ({ model | mode = newMode }, Cmd.none)
+      let
+        newModel = { model | mode = newMode }
+      in
+        (newModel, saveSettings (fromModel newModel))
 
     TriggerWorkingDay day ->
       let
@@ -59,6 +64,12 @@ update action model =
     ChangeEndMinute newEndMinute ->
       ({ model | endMinute = newEndMinute }, Cmd.none)
 
+    ApplySettings settings ->
+      (applySettings model settings, Cmd.none)
+
+    SaveSettings ->
+      (model, saveSettings (fromModel model))
+
     Tick newTime ->
       let
         newDate = D.fromTime newTime
@@ -67,7 +78,14 @@ update action model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  T.every (10 * T.millisecond) Tick
+  Sub.batch
+    [ T.every (10 * T.millisecond) Tick
+    , settings ApplySettings
+    ]
+
+port loadSettings : () -> Cmd msg
+port saveSettings : Settings -> Cmd msg
+port settings : (Settings -> msg) -> Sub msg
 
 view : Model -> Html Msg
 view model =

@@ -46,6 +46,9 @@ tree =
         , ("fri", leaf "Friday")
         , ("sat", leaf "Saturday")
         , ("sun", leaf "Sunday")
-        ]
-      ) ]
-    ) ]
+        ] )
+      , ("settings", node
+        [ ("save", leaf "Save")
+        ] )
+      ] )
+    ]

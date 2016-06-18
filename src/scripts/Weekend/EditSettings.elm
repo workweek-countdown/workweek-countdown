@@ -7,7 +7,7 @@ import String as St
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Weekend.Model exposing (Model)
+import Weekend.Model exposing (Model, Language)
 import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD exposing (Day)
 import Weekend.I18n exposing (t)
@@ -17,6 +17,7 @@ editSettingsView model =
   div [ class "settings" ]
     [ workingTimesView model
     , workingDaysView model.lang model.workingDays
+    , saveSettingsView model.lang
     ]
 
 workingTimesView : Model -> Html Msg
@@ -39,7 +40,7 @@ workingTimeView : (String -> Msg) -> Html Msg
 workingTimeView inputHandler =
   input [ type' "text", onInput inputHandler ] []
 
-workingDaysView : String -> S.Set Day -> Html Msg
+workingDaysView : Language -> S.Set Day -> Html Msg
 workingDaysView lang days =
   let
     dayView = \day -> workingDayView lang day (S.member day days)
@@ -47,10 +48,17 @@ workingDaysView lang days =
   in
     div [ class "settings_working-days" ] possibleDaysViews
 
-workingDayView : String -> Day -> Bool -> Html Msg
+workingDayView : Language -> Day -> Bool -> Html Msg
 workingDayView lang day active =
   let
     dayName = t <| lang ++ ".days." ++ day
     classes = classList [("settings_working-day", True), ("m-active", active)]
   in
     div [ classes, onClick (TriggerWorkingDay day) ] [ text dayName ]
+
+saveSettingsView : Language -> Html Msg
+saveSettingsView lang =
+  let
+    content = t <| lang ++ ".settings.save"
+  in
+    div [ class "settings_save", onClick SaveSettings ] [ text content ]
