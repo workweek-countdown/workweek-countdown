@@ -57,7 +57,11 @@ update action model =
 
     TriggerWorkingDay day ->
       let
-        newWorkingDays = (if S.member day model.workingDays then S.remove else S.insert) day model.workingDays
+        { workingDays } = model
+        newWorkingDays = if S.member day workingDays then
+          if S.size workingDays == 1 then workingDays else S.remove day workingDays
+        else
+          S.insert day workingDays
       in
         ({ model | workingDays = newWorkingDays }, Cmd.none)
 
