@@ -25,7 +25,16 @@ main =
 
 defaultModel : Model
 defaultModel =
-  Model Counter Countdown "en" (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri]) 9 0 18 0 (D.fromTime 0)
+  { route = Counter
+  , mode = Countdown
+  , lang = "en"
+  , workingDays = (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
+  , startHour = 9
+  , startMinute = 0
+  , endHour = 18
+  , endMinute = 0
+  , date = (D.fromTime 0)
+  }
 
 init : (Model, Cmd Msg)
 init =
