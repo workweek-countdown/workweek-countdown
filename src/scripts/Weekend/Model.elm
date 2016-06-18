@@ -2,7 +2,7 @@ module Weekend.Model exposing (Model, Settings, Route(..), Mode(..))
 
 import Set as S
 import Date as D
-import Weekend.Day as WD
+import Weekend.Day exposing (Day)
 
 type Route
   = Counter
@@ -14,7 +14,8 @@ type Mode
 
 type alias Settings =
   { mode : Mode
-  , workingDays : S.Set WD.Day
+  , lang: String
+  , days : S.Set Day
   }
 
 type alias Model =

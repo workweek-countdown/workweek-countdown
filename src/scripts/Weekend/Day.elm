@@ -2,28 +2,28 @@ module Weekend.Day exposing (Day, mon, tue, wed, thu, fri, sat, sun, days, dayOf
 
 import Date as D
 
-type alias Day = Int
+type alias Day = String
 
 mon : Day
-mon = 0
+mon = "mon"
 
 tue : Day
-tue = 1
+tue = "tue"
 
 wed : Day
-wed = 2
+wed = "wed"
 
 thu : Day
-thu = 3
+thu = "thu"
 
 fri : Day
-fri = 4
+fri = "fri"
 
 sat : Day
-sat = 5
+sat = "sat"
 
 sun : Day
-sun = 6
+sun = "sun"
 
 days : List Day
 days =
@@ -43,10 +43,10 @@ dayOfWeekToDay day =
 dayToDayOfWeek : Day -> D.Day
 dayToDayOfWeek int =
   case int of
-    0 -> D.Mon
-    1 -> D.Tue
-    2 -> D.Wed
-    3 -> D.Thu
-    4 -> D.Fri
-    5 -> D.Sat
+    "mon" -> D.Mon
+    "tue" -> D.Tue
+    "wed" -> D.Wed
+    "thu" -> D.Thu
+    "fri" -> D.Fri
+    "sat" -> D.Sat
     _ -> D.Sun

@@ -5,25 +5,29 @@ import Set as S
 import Date as D
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Weekend.Model exposing (Model)
-import Weekend.Day as WD
+import Weekend.Day as WD exposing (Day)
+import Weekend.I18n exposing (t)
 
-editSettingsView : Model -> Html msg
-editSettingsView model =
+editSettingsView : (Day -> msg) -> Model -> Html msg
+editSettingsView triggerDay model =
   div [ class "settings" ]
-    [ workingDaysView model.settings.workingDays
+    [ workingDaysView model.settings.lang triggerDay model.settings.days
     ]
 
-workingDaysView : S.Set WD.Day -> Html msg
-workingDaysView days =
+workingDaysView : String -> (Day -> msg) -> S.Set Day -> Html msg
+workingDaysView lang triggerDay days =
   let
-    possibleDaysViews = L.map (\day -> workingDayView day (S.member day days)) WD.days
+    dayView = \day -> workingDayView lang triggerDay day (S.member day days)
+    possibleDaysViews = L.map dayView WD.days
   in
     div [ class "settings_working-days" ] possibleDaysViews
 
-workingDayView : WD.Day -> Bool -> Html msg
-workingDayView day active =
-  label [ class "settings_working-day" ]
-    [ input [ type' "checkbox", checked active ] []
-    , span [] [ text (toString day) ]
-    ]
+workingDayView : String -> (Day -> msg) -> Day -> Bool -> Html msg
+workingDayView lang triggerDay day active =
+  let
+    dayName = t <| lang ++ ".days." ++ day
+    classes = classList [("settings_working-day", True), ("m-active", active)]
+  in
+    div [ classes, onClick (triggerDay day) ] [ text dayName ]

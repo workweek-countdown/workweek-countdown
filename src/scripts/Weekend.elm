@@ -8,7 +8,7 @@ import Set as S
 import Date as D
 import Time as T
 import Weekend.Model exposing (Model, Settings, Route(..), Mode(..))
-import Weekend.Day as WD
+import Weekend.Day as WD exposing (Day)
 import Weekend.Counter exposing (counterView)
 import Weekend.EditSettings exposing (editSettingsView)
 
@@ -22,7 +22,7 @@ main =
 
 defaultSettings : Settings
 defaultSettings =
-  Settings Countdown (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
+  Settings Countdown "en" (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
 
 init : (Model, Cmd Msg)
 init =
@@ -31,6 +31,7 @@ init =
 type Msg
   = ChangeRoute Route
   | ChangeMode Mode
+  | TriggerDay Day
   | Tick T.Time
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -41,8 +42,17 @@ update action model =
 
     ChangeMode newMode ->
       let
-        settings = model.settings
+        { settings } = model
         newSettings = { settings | mode = newMode }
+      in
+        ({ model | settings = newSettings }, Cmd.none)
+
+    TriggerDay day ->
+      let
+        { settings } = model
+        { days } = settings
+        newDays = (if S.member day days then S.remove else S.insert) day days
+        newSettings = { settings | days = newDays }
       in
         ({ model | settings = newSettings }, Cmd.none)
 
@@ -61,7 +71,7 @@ view model =
   let
     routeView = case model.route of
       Counter -> counterView ChangeMode
-      EditSettings -> editSettingsView
+      EditSettings -> editSettingsView TriggerDay
   in
     div [ class "layout" ]
       [ div [ class "layout_body" ]
