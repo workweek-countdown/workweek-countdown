@@ -30,15 +30,15 @@ workingTimesView model =
         Err _ -> None
   in
     div [ class "settings_working-time" ]
-      [ workingTimeView (parseInput ChangeStartHour 0 59)
-      , workingTimeView (parseInput ChangeEndHour 0 59)
-      , workingTimeView (parseInput ChangeStartMinute 0 23)
-      , workingTimeView (parseInput ChangeEndMinute 0 23)
+      [ workingTimeView model.startHour (parseInput ChangeStartHour 0 59)
+      , workingTimeView model.startMinute (parseInput ChangeEndHour 0 59)
+      , workingTimeView model.endHour (parseInput ChangeStartMinute 0 23)
+      , workingTimeView model.endMinute (parseInput ChangeEndMinute 0 23)
       ]
 
-workingTimeView : (String -> Msg) -> Html Msg
-workingTimeView inputHandler =
-  input [ type' "text", onInput inputHandler ] []
+workingTimeView : Int -> (String -> Msg) -> Html Msg
+workingTimeView value inputHandler =
+  input [ type' "text", defaultValue (toString value), onInput inputHandler ] []
 
 workingDaysView : Language -> S.Set Day -> Html Msg
 workingDaysView lang days =
