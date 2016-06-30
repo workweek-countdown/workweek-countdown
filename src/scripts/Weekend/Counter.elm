@@ -60,13 +60,13 @@ modePickerView : Mode -> Html Msg
 modePickerView current =
   let
     options = L.map (modePickerOptionView current) [Countdown, Percent]
+    otherMode = if current == Countdown then Percent else Countdown
   in
-    div [ class "mode-picker" ] options
+    div [ class "mode-picker", onClick (ChangeMode otherMode) ] options
 
 modePickerOptionView : Mode -> Mode -> Html Msg
 modePickerOptionView current mode =
   let
     classes = classList [("mode-picker_option", True), ("m-current", current == mode)]
   in
-    div [ classes, onClick (ChangeMode mode) ]
-      [ text (toString mode) ]
+    div [ classes ] []
