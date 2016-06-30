@@ -10,10 +10,10 @@ type Msg
   | ChangeRoute Route
   | ChangeMode Mode
   | TriggerWorkingDay Day
-  | ChangeStartHour Int
-  | ChangeEndHour Int
-  | ChangeStartMinute Int
-  | ChangeEndMinute Int
+  | ChangeStartHour (Maybe Int)
+  | ChangeEndHour (Maybe Int)
+  | ChangeStartMinute (Maybe Int)
+  | ChangeEndMinute (Maybe Int)
   | ApplySettings Settings
   | SaveSettings
   | SaveSettingsAndChangeRoute Route

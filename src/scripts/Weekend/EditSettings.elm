@@ -12,33 +12,61 @@ import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD exposing (Day)
 import Weekend.I18n exposing (t)
 
+timeValidator : Int -> Int -> Maybe Int -> Bool
+timeValidator min max value =
+  case value of
+    Just val -> val >= min && val < max
+    Nothing -> False
+
+isValidHour : Maybe Int -> Bool
+isValidHour =
+  timeValidator 0 24
+
+isValidMinute : Maybe Int -> Bool
+isValidMinute =
+  timeValidator 0 60
+
+isValidTime : Model -> Bool
+isValidTime model =
+  let
+    { startHour, startMinute, endHour, endMinute } = model
+  in
+    (isValidHour startHour) && (isValidMinute startMinute) && (isValidHour endHour) && (isValidMinute endMinute)
+
 editSettingsView : Model -> Html Msg
 editSettingsView model =
   div [ class "settings" ]
     [ workingTimesView model
     , workingDaysView model.lang model.workingDays
-    , saveSettingsView model.lang
+    , saveSettingsView model.lang (isValidTime model)
     ]
 
 workingTimesView : Model -> Html Msg
 workingTimesView model =
   let
-    parseInput handler min max input =
+    { startHour, startMinute, endHour, endMinute } = model
+
+    parseInput handler input =
       case St.toInt input of
-        Ok value ->
-          if value >= min && value <= max then handler value else None
-        Err _ -> None
+        Ok value -> handler <| Just value
+        Err _ -> handler Nothing
   in
     div [ class "settings_working-time" ]
-      [ workingTimeView model.startHour (parseInput ChangeStartHour 0 23)
-      , workingTimeView model.startMinute (parseInput ChangeStartMinute 0 59)
-      , workingTimeView model.endHour (parseInput ChangeEndHour 0 23)
-      , workingTimeView model.endMinute (parseInput ChangeEndMinute 0 59)
+      [ workingTimeView startHour (isValidHour startHour) (parseInput ChangeStartHour)
+      , workingTimeView startMinute (isValidMinute startMinute) (parseInput ChangeStartMinute)
+      , workingTimeView endHour (isValidHour endHour) (parseInput ChangeEndHour)
+      , workingTimeView endMinute (isValidMinute endMinute) (parseInput ChangeEndMinute)
       ]
 
-workingTimeView : Int -> (String -> Msg) -> Html Msg
-workingTimeView value inputHandler =
-  input [ type' "text", defaultValue (toString value), onInput inputHandler ] []
+workingTimeView : Maybe Int -> Bool -> (String -> Msg) -> Html Msg
+workingTimeView value isValid inputHandler =
+  let
+    valueStr = case value of
+      Just val -> toString val
+      Nothing -> ""
+    classes = classList [("settings_working-time-input", True), ("m-invalid", not isValid)]
+  in
+    input [ type' "text", classes, defaultValue valueStr, onInput inputHandler ] []
 
 workingDaysView : Language -> S.Set Day -> Html Msg
 workingDaysView lang days =
@@ -56,9 +84,11 @@ workingDayView lang day active =
   in
     div [ classes, onClick (TriggerWorkingDay day) ] [ text dayName ]
 
-saveSettingsView : Language -> Html Msg
-saveSettingsView lang =
+saveSettingsView : Language -> Bool -> Html Msg
+saveSettingsView lang isValid =
   let
     content = t <| lang ++ ".settings.save"
+    classes = classList [("settings_save", True), ("m-invalid", not isValid)]
+    clickHandler = if isValid then SaveSettingsAndChangeRoute Counter else None
   in
-    div [ class "settings_save", onClick (SaveSettingsAndChangeRoute Counter) ] [ text content ]
+    div [ classes, onClick clickHandler ] [ text content ]

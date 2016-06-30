@@ -30,10 +30,10 @@ defaultModel =
   , mode = Countdown
   , lang = "en"
   , workingDays = (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
-  , startHour = 9
-  , startMinute = 0
-  , endHour = 18
-  , endMinute = 0
+  , startHour = Just 9
+  , startMinute = Just 0
+  , endHour = Just 18
+  , endMinute = Just 0
   , date = (D.fromTime 0)
   }
 

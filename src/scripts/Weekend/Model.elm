@@ -19,9 +19,9 @@ type alias Model =
   , mode : Mode
   , lang: Language
   , workingDays : S.Set Day
-  , startHour : Int
-  , startMinute : Int
-  , endHour : Int
-  , endMinute : Int
+  , startHour : Maybe Int
+  , startMinute : Maybe Int
+  , endHour : Maybe Int
+  , endMinute : Maybe Int
   , date : D.Date
   }
