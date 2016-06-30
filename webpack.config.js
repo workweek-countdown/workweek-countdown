@@ -16,6 +16,10 @@ module.exports = {
     noParse: /\.elm$/,
     loaders: [
       {
+        test: /\.(jpe?g|gif|png|svg)$/,
+        loader: 'file'
+      },
+      {
         test: /\.sass$/,
         loaders: ['style', 'css', 'sass']
       },

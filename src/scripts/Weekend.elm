@@ -122,4 +122,4 @@ settingsTriggerView route =
       EditSettings -> (Counter, "counter")
     classes = classList [("settings-trigger", True), ("m-" ++ mod, True)]
   in
-    div [ class classes, onClick (ChangeRoute newRoute) ] []
+    div [ classes, onClick (ChangeRoute newRoute) ] []
