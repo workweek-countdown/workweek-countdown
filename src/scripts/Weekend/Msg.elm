@@ -16,4 +16,5 @@ type Msg
   | ChangeEndMinute Int
   | ApplySettings Settings
   | SaveSettings
+  | SaveSettingsAndChangeRoute Route
   | Tick T.Time

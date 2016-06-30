@@ -4,6 +4,8 @@ import Set as S
 import Date as D
 import Time as T
 import Platform.Sub as Sub
+import Update.Extra as UE
+import Update.Extra.Infix exposing((:>))
 import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
@@ -82,6 +84,11 @@ update action model =
 
     SaveSettings ->
       (model, saveSettings (fromModel model))
+
+    SaveSettingsAndChangeRoute route ->
+      model ! []
+        :> update SaveSettings
+        :> update (ChangeRoute route)
 
     Tick newTime ->
       let
