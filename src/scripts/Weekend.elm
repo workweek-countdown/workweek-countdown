@@ -118,8 +118,8 @@ settingsTriggerView : Route -> Html Msg
 settingsTriggerView route =
   let
     (newRoute, content) = case route of
-      Counter -> (EditSettings, "settings")
-      EditSettings -> (Counter, "close")
+      Counter -> (EditSettings, "")
+      EditSettings -> (Counter, "")
   in
     div [ class "settings-trigger", onClick (ChangeRoute newRoute) ]
       [ text content ]
