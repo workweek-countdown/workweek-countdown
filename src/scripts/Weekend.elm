@@ -117,9 +117,9 @@ view model =
 settingsTriggerView : Route -> Html Msg
 settingsTriggerView route =
   let
-    (newRoute, content) = case route of
-      Counter -> (EditSettings, "")
-      EditSettings -> (Counter, "")
+    (newRoute, mod) = case route of
+      Counter -> (EditSettings, "edit-settings")
+      EditSettings -> (Counter, "counter")
+    classes = classList [("settings-trigger", True), ("m-" ++ mod, True)]
   in
-    div [ class "settings-trigger", onClick (ChangeRoute newRoute) ]
-      [ text content ]
+    div [ class classes, onClick (ChangeRoute newRoute) ] []
