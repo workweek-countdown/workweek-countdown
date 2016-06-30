@@ -30,10 +30,10 @@ workingTimesView model =
         Err _ -> None
   in
     div [ class "settings_working-time" ]
-      [ workingTimeView model.startHour (parseInput ChangeStartHour 0 59)
-      , workingTimeView model.startMinute (parseInput ChangeEndHour 0 59)
-      , workingTimeView model.endHour (parseInput ChangeStartMinute 0 23)
-      , workingTimeView model.endMinute (parseInput ChangeEndMinute 0 23)
+      [ workingTimeView model.startHour (parseInput ChangeStartHour 0 23)
+      , workingTimeView model.startMinute (parseInput ChangeStartMinute 0 59)
+      , workingTimeView model.endHour (parseInput ChangeEndHour 0 23)
+      , workingTimeView model.endMinute (parseInput ChangeEndMinute 0 59)
       ]
 
 workingTimeView : Int -> (String -> Msg) -> Html Msg
