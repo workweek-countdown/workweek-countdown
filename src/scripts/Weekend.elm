@@ -10,7 +10,7 @@ import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Weekend.Model exposing (Model, Route(..), Mode(..))
+import Weekend.Model exposing (Model, Route(..), Mode(..), defaultModel)
 import Weekend.Settings exposing (Settings, fromModel, applySettings)
 import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD
@@ -24,19 +24,6 @@ main =
     , update = update
     , subscriptions = subscriptions
     }
-
-defaultModel : Model
-defaultModel =
-  { route = Counter
-  , mode = Countdown
-  , lang = "en"
-  , workingDays = (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
-  , startHour = Just 9
-  , startMinute = Just 0
-  , endHour = Just 18
-  , endMinute = Just 0
-  , date = (D.fromTime 0)
-  }
 
 init : (Model, Cmd Msg)
 init =

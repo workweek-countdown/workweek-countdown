@@ -1,6 +1,10 @@
-module Weekend.Day exposing (Day, mon, tue, wed, thu, fri, sat, sun, days, dayOfWeekToDay, dayToDayOfWeek)
+module Weekend.Day exposing (Day, mon, tue, wed, thu, fri, sat, sun, days, nextDay, dayOfWeekToDay, dayToDayOfWeek, dateToDay)
 
 import Date as D
+import Dict as Dict
+import List as L
+import List.Extra as LE
+import Maybe as M
 
 type alias Day = String
 
@@ -29,25 +33,29 @@ days : List Day
 days =
   [mon, tue, wed, thu, fri, sat, sun]
 
+daysOfWeek : List D.Day
+daysOfWeek =
+  [D.Mon, D.Tue, D.Wed, D.Thu, D.Fri, D.Sat, D.Sun]
+
+nextDay : Day -> Day
+nextDay day =
+  let
+    nextDay' day days =
+      case days of
+        today :: tomorrow :: rest ->
+          if today == day then tomorrow else nextDay' day (tomorrow :: rest)
+        _ -> mon
+  in
+    nextDay' day days
+
 dayOfWeekToDay : D.Day -> Day
-dayOfWeekToDay day =
-  case day of
-    D.Mon -> mon
-    D.Tue -> tue
-    D.Wed -> wed
-    D.Thu -> thu
-    D.Fri -> fri
-    D.Sat -> sat
-    D.Sun -> sun
+dayOfWeekToDay dayOfWeek =
+  LE.elemIndex dayOfWeek daysOfWeek `M.andThen` (\index -> LE.getAt index days) |> M.withDefault mon
 
 dayToDayOfWeek : Day -> D.Day
-dayToDayOfWeek int =
-  case int of
-    "mon" -> D.Mon
-    "tue" -> D.Tue
-    "wed" -> D.Wed
-    "thu" -> D.Thu
-    "fri" -> D.Fri
-    "sat" -> D.Sat
-    "sun" -> D.Sun
-    _ -> D.Mon
+dayToDayOfWeek day =
+  LE.elemIndex day days `M.andThen` (\index -> LE.getAt index daysOfWeek) |> M.withDefault D.Mon
+
+dateToDay : D.Date -> Day
+dateToDay date =
+  dayOfWeekToDay <| D.dayOfWeek date
