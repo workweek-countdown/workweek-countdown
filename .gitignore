@@ -3,4 +3,5 @@
 /dist/index.html
 /dist/main.js
 /dist/*.png
+/dist/*.woff2
 npm-debug.log
