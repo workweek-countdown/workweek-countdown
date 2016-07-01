@@ -54,5 +54,8 @@ tree =
         , ("endTime", leaf "End")
         , ("save", leaf "Save")
         ] )
+      , ("counter", node
+        [ ("weekend", leaf "Enjoy your weekend!")
+        ] )
       ] )
     ]

@@ -9,9 +9,10 @@ import Date.Extra.TimeUnit as DETU
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Weekend.Model exposing (Model, Mode(..), defaultEndHour, defaultEndMinute)
+import Weekend.Model exposing (Model, Mode(..), Language, defaultEndHour, defaultEndMinute)
 import Weekend.Msg exposing (Msg(..))
 import Weekend.Day exposing (Day, nextDay, dateToDay)
+import Weekend.I18n exposing (t)
 import Weekend.Countdown exposing (countdownView)
 import Weekend.Percent exposing (percentView)
 
@@ -48,16 +49,29 @@ weekendStart workingDays endHour endMinute now =
 counterView : Model -> Html Msg
 counterView model =
   let
-    { mode, workingDays, endHour, endMinute, date } = model
-    weekend = weekendStart workingDays (M.withDefault defaultEndHour endHour) (M.withDefault defaultEndMinute endMinute) date
+    { mode, lang, workingDays, date } = model
+    endHour = M.withDefault defaultEndHour model.endHour
+    endMinute = M.withDefault defaultEndHour model.endMinute
+    weekend = weekendStart workingDays endHour endMinute date
     modeView = case mode of
       Countdown -> countdownView
       Percent -> percentView
+    mainView = if isWeekend workingDays endHour endMinute date then
+      weekendView lang
+    else
+      modeView date weekend
   in
     div [ class "counter" ]
-      [ modeView date weekend
+      [ mainView
       , modePickerView mode
       ]
+
+weekendView : Language -> Html Msg
+weekendView lang =
+  let
+    content = t <| lang ++ ".counter.weekend"
+  in
+    div [ class "counter_weekend" ] [ text content ]
 
 modePickerView : Mode -> Html Msg
 modePickerView current =
