@@ -1,5 +1,6 @@
 port module Weekend exposing (main)
 
+import List as L
 import Set as S
 import Date as D
 import Time as T
@@ -59,10 +60,11 @@ update action model =
     TriggerWorkingDay day ->
       let
         { workingDays } = model
+        workingDaysCount = S.size workingDays
         newWorkingDays = if S.member day workingDays then
-          if S.size workingDays == 1 then workingDays else S.remove day workingDays
+          if workingDaysCount == 1 then workingDays else S.remove day workingDays
         else
-          S.insert day workingDays
+          if workingDaysCount == (L.length WD.days) - 1 then workingDays else S.insert day workingDays
       in
         ({ model | workingDays = newWorkingDays }, Cmd.none)
 
