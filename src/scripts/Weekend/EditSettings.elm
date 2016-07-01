@@ -12,6 +12,8 @@ import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD exposing (Day)
 import Weekend.I18n exposing (t)
 
+type alias TimeMsg = Maybe Int -> Msg
+
 timeValidator : Int -> Int -> Maybe Int -> Bool
 timeValidator min max value =
   case value of
@@ -36,26 +38,57 @@ isValidTime model =
 editSettingsView : Model -> Html Msg
 editSettingsView model =
   div [ class "settings" ]
-    [ workingTimesView model
-    , workingDaysView model.lang model.workingDays
+    [ titleView model.lang
+    , fieldsView model
     , saveSettingsView model.lang (isValidTime model)
     ]
+
+titleView : Language -> Html Msg
+titleView lang =
+  let
+    content = t <| lang ++ ".settings.title"
+  in
+    div [ class "settings_title" ] [ text content ]
+
+fieldsView : Model -> Html Msg
+fieldsView model =
+  div [ class "settings_fields" ]
+    [ fieldsPartView (workingDaysView model.lang model.workingDays)
+    , fieldsPartView (workingTimesView model)
+    ]
+
+fieldsPartView : Html Msg -> Html Msg
+fieldsPartView fields =
+  div [ class "settings_fields-part" ] [ fields ]
 
 workingTimesView : Model -> Html Msg
 workingTimesView model =
   let
-    { startHour, startMinute, endHour, endMinute } = model
+    { lang, startHour, startMinute, endHour, endMinute } = model
+    startTimeTitle = t <| lang ++ ".settings.startTime"
+    endTimeTitle = t <| lang ++ ".settings.endTime"
+  in
+    div [ class "settings_working-time" ]
+      [ workingTimeGroupView startTimeTitle startHour startMinute ChangeStartHour ChangeStartMinute
+      , div [ class "settings_working-time-group-split" ] [ text "-" ]
+      , workingTimeGroupView endTimeTitle endHour endMinute ChangeEndHour ChangeEndMinute
+      ]
 
+workingTimeGroupView : String -> Maybe Int -> Maybe Int -> TimeMsg -> TimeMsg -> Html Msg
+workingTimeGroupView title hour minute changeHour changeMinute =
+  let
     parseInput handler input =
       case St.toInt input of
         Ok value -> handler <| Just value
         Err _ -> handler Nothing
   in
-    div [ class "settings_working-time" ]
-      [ workingTimeView startHour (isValidHour startHour) (parseInput ChangeStartHour)
-      , workingTimeView startMinute (isValidMinute startMinute) (parseInput ChangeStartMinute)
-      , workingTimeView endHour (isValidHour endHour) (parseInput ChangeEndHour)
-      , workingTimeView endMinute (isValidMinute endMinute) (parseInput ChangeEndMinute)
+    div [ class "settings_working-time-group" ]
+      [ div [ class "settings_working-time-title" ] [ text title ]
+      , div [ class "settings_working-time-fields" ]
+          [ workingTimeView hour (isValidHour hour) (parseInput changeHour)
+          , text ":"
+          , workingTimeView minute (isValidMinute minute) (parseInput changeMinute)
+          ]
       ]
 
 workingTimeView : Maybe Int -> Bool -> (String -> Msg) -> Html Msg
@@ -64,7 +97,7 @@ workingTimeView value isValid inputHandler =
     valueStr = case value of
       Just val -> toString val
       Nothing -> ""
-    classes = classList [("settings_working-time-input", True), ("m-invalid", not isValid)]
+    classes = classList [("settings_working-time-field", True), ("m-invalid", not isValid)]
   in
     input [ type' "text", classes, defaultValue valueStr, onInput inputHandler ] []
 

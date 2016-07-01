@@ -1,14 +1,58 @@
 .settings
+  display: flex
+  flex-flow: column nowrap
   font-size: 20px
+  align-items: center
+
+  &_title
+    font-size: 60px
+    margin-bottom: 20px
+
+  &_fields
+    display: flex
+    flex-flow: row nowrap
+
+    &-part
+      flex: 1
+
+  &_working-days
+    display: flex
+    flex-flow: row nowrap
 
   &_working-day
+    display: flex
+    align-items: center
+    justify-content: center
     cursor: pointer
-    margin-bottom: 5px
+    color: white
+    background: $blue
+    border-radius: 50%
+    margin-right: 10px
+    width: 60px
+    height: 60px
+    transition: background 0.2s linear
     -webkit-user-select: none
 
-    &::before
-      content: '⊡'
-
     &.m-active
-      &::before
-        content: '🗹'
+      background: darken($blue, 30)
+
+  &_working-time
+    display: flex
+    flex-flow: row nowrap
+
+    &-fields
+      display: flex
+      flex-flow: row nowrap
+
+    &-field
+      &.m-invalid
+        border-color: red
+
+  &_save
+    display: inline-block
+    cursor: pointer
+    font-size: 40px
+    color: white
+    background: $blue
+    padding: 10px
+    margin-top: 20px

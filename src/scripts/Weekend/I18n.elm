@@ -39,16 +39,20 @@ tree =
   node
     [ ("en", node
       [ ("days", node
-        [ ("mon", leaf "Monday")
-        , ("tue", leaf "Tuesday")
-        , ("wed", leaf "Wednesday")
-        , ("thu", leaf "Thursday")
-        , ("fri", leaf "Friday")
-        , ("sat", leaf "Saturday")
-        , ("sun", leaf "Sunday")
+        [ ("mon", leaf "Mon")
+        , ("tue", leaf "Tue")
+        , ("wed", leaf "Wed")
+        , ("thu", leaf "Thu")
+        , ("fri", leaf "Fri")
+        , ("sat", leaf "Sat")
+        , ("sun", leaf "Sun")
         ] )
       , ("settings", node
-        [ ("save", leaf "Save")
+        [ ("title", leaf "Choose your working days, please")
+        , ("days", leaf "Days")
+        , ("startTime", leaf "Start")
+        , ("endTime", leaf "End")
+        , ("save", leaf "Save")
         ] )
       ] )
     ]
