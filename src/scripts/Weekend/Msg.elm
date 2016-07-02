@@ -15,6 +15,8 @@ type Msg
   | ChangeStartMinute (Maybe Int)
   | ChangeEndMinute (Maybe Int)
   | ApplySettings Settings
+  | LoadSettings
   | SaveSettings
+  | LoadSettingsAndChangeRoute Route
   | SaveSettingsAndChangeRoute Route
   | Tick T.Time

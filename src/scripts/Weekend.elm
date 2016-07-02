@@ -70,8 +70,16 @@ update action model =
     ApplySettings settings ->
       (applySettings model settings, Cmd.none)
 
+    LoadSettings ->
+      (model, loadSettings ())
+
     SaveSettings ->
       (model, saveSettings (fromModel model))
+
+    LoadSettingsAndChangeRoute route ->
+      model ! []
+        :> update LoadSettings
+        :> update (ChangeRoute route)
 
     SaveSettingsAndChangeRoute route ->
       model ! []
@@ -112,9 +120,9 @@ view model =
 settingsTriggerView : Route -> Html Msg
 settingsTriggerView route =
   let
-    (newRoute, mod) = case route of
-      Counter -> (EditSettings, "edit-settings")
-      EditSettings -> (Counter, "counter")
+    (clickHandler, mod) = case route of
+      Counter -> (ChangeRoute EditSettings, "edit-settings")
+      EditSettings -> (LoadSettingsAndChangeRoute Counter, "counter")
     classes = classList [("settings-trigger", True), ("m-" ++ mod, True)]
   in
-    div [ classes, onClick (ChangeRoute newRoute) ] []
+    div [ classes, onClick clickHandler ] []
