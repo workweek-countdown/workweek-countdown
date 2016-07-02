@@ -67,7 +67,7 @@ counterView model =
     weekend = weekendStart workingDays endHour endMinute date
     modeView = case mode of
       Countdown -> countdownView
-      Percent -> percentView <| Debug.log "in a row" <| workingDaysInARow workingDays date
+      Percent -> percentView <| workingDaysInARow workingDays date
     mainView = if isWeekend workingDays endHour endMinute date then
       weekendView lang
     else
