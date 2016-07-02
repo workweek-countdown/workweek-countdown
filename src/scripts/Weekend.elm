@@ -4,6 +4,7 @@ import Set as S
 import Date as D
 import Time as T
 import Platform.Sub as Sub
+import Update.Extra.Infix exposing((:>))
 import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
@@ -83,6 +84,11 @@ update action model =
     SaveSettings ->
       (model, saveSettings (fromModel model))
 
+    SaveSettingsAndChangeRoute route ->
+      model ! []
+        :> update SaveSettings
+        :> update (ChangeRoute route)
+
     Tick newTime ->
       let
         newDate = D.fromTime newTime
@@ -117,9 +123,9 @@ view model =
 settingsTriggerView : Route -> Html Msg
 settingsTriggerView route =
   let
-    (newRoute, content) = case route of
-      Counter -> (EditSettings, "")
-      EditSettings -> (Counter, "")
+    (newRoute, mod) = case route of
+      Counter -> (EditSettings, "edit-settings")
+      EditSettings -> (Counter, "counter")
+    classes = classList [("settings-trigger", True), ("m-" ++ mod, True)]
   in
-    div [ class "settings-trigger", onClick (ChangeRoute newRoute) ]
-      [ text content ]
+    div [ classes, onClick (ChangeRoute newRoute) ] []

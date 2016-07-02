@@ -7,7 +7,7 @@ import String as St
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Weekend.Model exposing (Model, Language)
+import Weekend.Model exposing (Model, Route(..), Language)
 import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD exposing (Day)
 import Weekend.I18n exposing (t)
@@ -61,4 +61,4 @@ saveSettingsView lang =
   let
     content = t <| lang ++ ".settings.save"
   in
-    div [ class "settings_save", onClick SaveSettings ] [ text content ]
+    div [ class "settings_save", onClick (SaveSettingsAndChangeRoute Counter) ] [ text content ]
