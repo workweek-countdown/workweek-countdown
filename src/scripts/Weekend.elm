@@ -5,7 +5,7 @@ import Set as S
 import Date as D
 import Time as T
 import Platform.Sub as Sub
-import Update.Extra.Infix exposing((:>))
+import Update.Extra.Infix exposing ((:>))
 import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
