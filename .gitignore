@@ -3,5 +3,6 @@
 /dist/index.html
 /dist/main.js
 /dist/*.png
+/dist/*.svg
 /dist/*.woff2
 npm-debug.log
