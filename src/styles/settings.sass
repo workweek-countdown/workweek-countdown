@@ -1,16 +1,18 @@
 .settings
   display: flex
   flex-flow: column nowrap
-  font-size: 20px
   align-items: center
 
-  &_title
-    font-size: 60px
-    margin-bottom: 20px
 
-  &_fields
-    display: flex
-    flex-flow: row nowrap
+  &_title
+    // +title
+    font-family: "Fira Mono", monospace
+    font-weight: 600
+    font-size: 48px
+    text-align: center
+    margin-bottom: 1em
+    color: rgba(0, 0, 0, .3)
+
 
     &-part
       flex: 1
@@ -18,41 +20,90 @@
   &_working-days
     display: flex
     flex-flow: row nowrap
+    margin-bottom: 48px
 
   &_working-day
+    font-size: 16px
     display: flex
     align-items: center
     justify-content: center
     cursor: pointer
-    color: white
-    background: $blue
+    color: rgba(0, 0, 0, .5)
+    background: white
+    box-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #b5b5b5, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.05), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15)
     border-radius: 50%
-    margin-right: 10px
-    width: 60px
-    height: 60px
-    transition: background 0.2s linear
+    margin: 0 16px
+    width: 64px
+    height: 64px
+    transition-property: background, transform, box-shadow, color
+    transition-duration: .2s
+    transition-timing-function: linear
     -webkit-user-select: none
-
     &.m-active
-      background: darken($blue, 30)
+      background: rgba(234, 250, 253, 0.75)
+      box-shadow: 0 1px 0 #ccc, 0 0px 0 #c9c9c9, 0 0px 0 #bbb, 0 0px 0 #b9b9b9, 0 0px 0 #b5b5b5, 0 6px 1px rgba(0,0,0,.05), 0 0 5px rgba(0,0,0,.05), 0 1px 3px rgba(0,0,0,.05), 0 3px 5px rgba(0,0,0,.01), 0 5px 10px rgba(0,0,0,.05), 0 10px 10px rgba(0,0,0,.05), 0 20px 20px rgba(0,0,0,.05)
+      transform: translateY(3px)
+      color: rgba(0, 0, 0, .75)
 
   &_working-time
     display: flex
     flex-flow: row nowrap
+    justify-content: center
+    align-items: flex-end
+
+    &-title
+      font-size: 12px
+      text-shadow: 0 1px 1px white
+      color: rgba(0, 0, 0, .5)
+      text-transform: uppercase
+      font-weight: 600
+      margin-bottom: 1.5em
 
     &-fields
       display: flex
       flex-flow: row nowrap
+      font-size: 48px
 
     &-field
+      outline: none
+      padding: 10px
+      border: 2px solid rgba(0, 0, 0, .1)
+      border-radius: 12px
+      font-size: 48px
+      color: rgba(0, 0, 0, .75)
+      width: 60px
+      text-align: center
+      &:focus
+        box-shadow: 0 0 30px rgba(234, 250, 253, 1), 0 0 10px rgba(0, 0, 0, .1)
+
       &.m-invalid
         border-color: red
+
+      &:first-of-type
+        margin-right: 10px
+
+      &:last-of-type
+        margin-left: 10px
+
+    &-group
+      &-split
+        font-size: 48px
+        height: 72px
+        padding: 0 10px
 
   &_save
     display: inline-block
     cursor: pointer
-    font-size: 40px
-    color: white
-    background: $blue
-    padding: 10px
-    margin-top: 20px
+    font-size: 20px
+    font-weight: bold
+    padding: 20px 40px
+    color: rgba(0, 0, 0, .5)
+    box-shadow: 0 5px 30px rgba(0, 0, 0, .1), 0 0 2px rgba(0, 0, 0, .05)
+    border-bottom: 5px solid rgba(0, 0, 0, .15)
+    background: white
+    margin-top: 48px
+    border-radius: 12px
+    transition: color .2s linear
+
+    &:hover
+      color: $blue

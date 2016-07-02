@@ -1,13 +1,22 @@
 .settings-trigger
-  position: absolute
-  left: 20px
-  bottom: 20px
-  cursor: pointer
-  opacity: .5
-  width: 32px
-  height: 32px
-  background-color: red
-  background-image: url('../images/settings.png')
   background-size: contain
   background-repeat: no-repeat
   background-position: center center
+  position: absolute
+  cursor: pointer
+  opacity: .3
+
+
+  &.m-edit-settings
+    left: 21px
+    bottom: 21px
+    width: 22px
+    height: 22px
+    background-image: url('../images/settings.svg')
+
+  &.m-counter
+    top: 20px
+    right: 20px
+    background-image: url('../images/close.svg')
+    width: 20px
+    height: 20px
