@@ -5,6 +5,7 @@ import Set as S
 import Date as D
 import Time as T
 import Platform.Sub as Sub
+import Update.Extra as UE
 import Update.Extra.Infix exposing ((:>))
 import Html exposing (..)
 import Html.App as App
@@ -71,13 +72,14 @@ update action model =
       ({ model | activeWorkingTimeInput = newActiveWorkingTimeInput }, Cmd.none)
 
     ApplySettings settings ->
-      (applySettings model settings, Cmd.none)
+      (applySettings model settings) ! []
+        |> UE.filter settings.firstStart (UE.andThen update <| ChangeRoute EditSettings)
 
     LoadSettings ->
       (model, loadSettings ())
 
     SaveSettings ->
-      (model, saveSettings (fromModel model))
+      ({ model | firstStart = False }, saveSettings (fromModel model))
 
     LoadSettingsAndChangeRoute route ->
       model ! []

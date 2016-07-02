@@ -24,6 +24,7 @@ type alias Model =
   { route : Route
   , mode : Mode
   , lang: Language
+  , firstStart : Bool
   , workingDays : S.Set Day
   , startHour : Maybe Int
   , startMinute : Maybe Int
@@ -50,6 +51,7 @@ defaultModel =
   { route = Counter
   , mode = Countdown
   , lang = "en"
+  , firstStart = True
   , workingDays = S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri]
   , startHour = Just defaultStartHour
   , startMinute = Just defaultStartMinute

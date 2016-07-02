@@ -6,7 +6,8 @@ import Weekend.Day exposing (Day)
 
 type alias Settings =
   { mode : String
-  , lang: Language
+  , lang : Language
+  , firstStart : Bool
   , workingDays : List Day
   , startHour : Maybe Int
   , startMinute : Maybe Int
@@ -18,6 +19,7 @@ fromModel : Model -> Settings
 fromModel model =
   { mode = toString model.mode
   , lang = model.lang
+  , firstStart = model.firstStart
   , workingDays = S.toList model.workingDays
   , startHour = model.startHour
   , startMinute = model.startMinute
@@ -30,6 +32,7 @@ applySettings model settings =
   { model
   | mode = modeFromString settings.mode
   , lang = settings.lang
+  , firstStart = settings.firstStart
   , workingDays = S.fromList settings.workingDays
   , startHour = settings.startHour
   , startMinute = settings.startMinute
