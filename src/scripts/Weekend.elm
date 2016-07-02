@@ -67,6 +67,9 @@ update action model =
     ChangeEndMinute newEndMinute ->
       ({ model | endMinute = newEndMinute }, Cmd.none)
 
+    ChangeActiveWorkingTimeInput newActiveWorkingTimeInput ->
+      ({ model | activeWorkingTimeInput = newActiveWorkingTimeInput }, Cmd.none)
+
     ApplySettings settings ->
       (applySettings model settings, Cmd.none)
 

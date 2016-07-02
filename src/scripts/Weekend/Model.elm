@@ -1,4 +1,4 @@
-module Weekend.Model exposing (Model, Route(..), Mode(..), Language, defaultModel, defaultStartHour, defaultStartMinute, defaultEndHour, defaultEndMinute)
+module Weekend.Model exposing (Model, Route(..), Mode(..), WorkingTimeInput(..), Language, defaultModel, defaultStartHour, defaultStartMinute, defaultEndHour, defaultEndMinute)
 
 import Set as S
 import Date as D
@@ -12,6 +12,12 @@ type Mode
   = Countdown
   | Percent
 
+type WorkingTimeInput
+  = StartHourInput
+  | StartMinuteInput
+  | EndHourInput
+  | EndMinuteInput
+
 type alias Language = String
 
 type alias Model =
@@ -23,6 +29,7 @@ type alias Model =
   , startMinute : Maybe Int
   , endHour : Maybe Int
   , endMinute : Maybe Int
+  , activeWorkingTimeInput : Maybe WorkingTimeInput
   , date : D.Date
   }
 
@@ -43,10 +50,11 @@ defaultModel =
   { route = Counter
   , mode = Countdown
   , lang = "en"
-  , workingDays = (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
+  , workingDays = S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri]
   , startHour = Just defaultStartHour
   , startMinute = Just defaultStartMinute
   , endHour = Just defaultEndHour
   , endMinute = Just defaultEndMinute
-  , date = (D.fromTime 0)
+  , activeWorkingTimeInput = Nothing
+  , date = D.fromTime 0
   }

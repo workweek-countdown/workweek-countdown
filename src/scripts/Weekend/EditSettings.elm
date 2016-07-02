@@ -4,15 +4,20 @@ import List as L
 import Set as S
 import Date as D
 import String as St
+import Maybe as M
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Weekend.Model exposing (Model, Route(..), Language)
+import Weekend.Model exposing (Model, Route(..), WorkingTimeInput(..), Language)
 import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD exposing (Day)
 import Weekend.I18n exposing (t)
 
 type alias TimeMsg = Maybe Int -> Msg
+
+type WorkingTimeGroup
+  = StartTimeGroup
+  | EndTimeGroup
 
 timeValidator : Int -> Int -> Maybe Int -> Bool
 timeValidator min max value =
@@ -63,20 +68,40 @@ fieldsPartView fields =
 
 workingTimesView : Model -> Html Msg
 workingTimesView model =
-  let
-    { lang, startHour, startMinute, endHour, endMinute } = model
-    startTimeTitle = t <| lang ++ ".settings.startTime"
-    endTimeTitle = t <| lang ++ ".settings.endTime"
-  in
-    div [ class "settings_working-time" ]
-      [ workingTimeGroupView startTimeTitle startHour startMinute ChangeStartHour ChangeStartMinute
-      , div [ class "settings_working-time-group-split" ] [ text "-" ]
-      , workingTimeGroupView endTimeTitle endHour endMinute ChangeEndHour ChangeEndMinute
-      ]
+  div [ class "settings_working-time" ]
+    [ workingTimeGroupView model StartTimeGroup
+    , div [ class "settings_working-time-group-split" ] [ text "-" ]
+    , workingTimeGroupView model EndTimeGroup
+    ]
 
-workingTimeGroupView : String -> Maybe Int -> Maybe Int -> TimeMsg -> TimeMsg -> Html Msg
-workingTimeGroupView title hour minute changeHour changeMinute =
+workingTimeGroupView : Model -> WorkingTimeGroup -> Html Msg
+workingTimeGroupView model group =
   let
+    { lang, startHour, startMinute, endHour, endMinute, activeWorkingTimeInput } = model
+
+    (title, hourInputType, minuteInputType, hour, minute, changeHour, changeMinute) = case group of
+      StartTimeGroup ->
+        ( t (lang ++ ".settings.startTime")
+        , StartHourInput
+        , StartMinuteInput
+        , startHour
+        , startMinute
+        , ChangeStartHour
+        , ChangeStartMinute
+        )
+      EndTimeGroup ->
+        ( t (lang ++ ".settings.endTime")
+        , EndHourInput
+        , EndMinuteInput
+        , endHour
+        , endMinute
+        , ChangeEndHour
+        , ChangeEndMinute
+        )
+
+    isActiveInput inputType =
+      M.withDefault False <| M.map2 (==) activeWorkingTimeInput <| Just inputType
+
     parseInput handler input =
       case St.toInt input of
         Ok value -> handler <| Just value
@@ -85,21 +110,31 @@ workingTimeGroupView title hour minute changeHour changeMinute =
     div [ class "settings_working-time-group" ]
       [ div [ class "settings_working-time-title" ] [ text title ]
       , div [ class "settings_working-time-fields" ]
-          [ workingTimeView hour (isValidHour hour) (parseInput changeHour)
+          [ workingTimeView hourInputType hour (isValidHour hour) (isActiveInput hourInputType) (parseInput changeHour)
           , div [ class "settings_working-time-separator" ] [ text ":" ]
-          , workingTimeView minute (isValidMinute minute) (parseInput changeMinute)
+          , workingTimeView minuteInputType minute (isValidMinute minute) (isActiveInput minuteInputType) (parseInput changeMinute)
           ]
       ]
 
-workingTimeView : Maybe Int -> Bool -> (String -> Msg) -> Html Msg
-workingTimeView value isValid inputHandler =
+workingTimeView : WorkingTimeInput -> Maybe Int -> Bool -> Bool -> (String -> Msg) -> Html Msg
+workingTimeView inputType val isValid isActive inputHandler =
   let
-    valueStr = case value of
-      Just val -> toString val
+    valueStr = case val of
+      Just value ->
+        if isActive then toString value else St.padLeft 2 '0' <| toString value
       Nothing -> ""
     classes = classList [("settings_working-time-field", True), ("m-invalid", not isValid)]
   in
-    input [ type' "text", classes, defaultValue valueStr, maxlength 2, attribute "inputmode" "numeric", onInput inputHandler ] []
+    input
+      [ type' "text"
+      , classes
+      , maxlength 2
+      , attribute "inputmode" "numeric"
+      , value valueStr
+      , onInput inputHandler
+      , onFocus (ChangeActiveWorkingTimeInput <| Just inputType)
+      , onBlur (ChangeActiveWorkingTimeInput Nothing)
+      ] []
 
 workingDaysView : Language -> S.Set Day -> Html Msg
 workingDaysView lang days =
