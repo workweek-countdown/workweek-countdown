@@ -1,5 +1,6 @@
 port module Weekend exposing (main)
 
+import List as L
 import Set as S
 import Date as D
 import Time as T
@@ -9,7 +10,7 @@ import Html exposing (..)
 import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Weekend.Model exposing (Model, Route(..), Mode(..))
+import Weekend.Model exposing (Model, Route(..), Mode(..), defaultModel)
 import Weekend.Settings exposing (Settings, fromModel, applySettings)
 import Weekend.Msg exposing (Msg(..))
 import Weekend.Day as WD
@@ -23,19 +24,6 @@ main =
     , update = update
     , subscriptions = subscriptions
     }
-
-defaultModel : Model
-defaultModel =
-  { route = Counter
-  , mode = Countdown
-  , lang = "en"
-  , workingDays = (S.fromList [WD.mon, WD.tue, WD.wed, WD.thu, WD.fri])
-  , startHour = 9
-  , startMinute = 0
-  , endHour = 18
-  , endMinute = 0
-  , date = (D.fromTime 0)
-  }
 
 init : (Model, Cmd Msg)
 init =
@@ -59,10 +47,11 @@ update action model =
     TriggerWorkingDay day ->
       let
         { workingDays } = model
+        workingDaysCount = S.size workingDays
         newWorkingDays = if S.member day workingDays then
-          if S.size workingDays == 1 then workingDays else S.remove day workingDays
+          if workingDaysCount == 1 then workingDays else S.remove day workingDays
         else
-          S.insert day workingDays
+          if workingDaysCount == (L.length WD.days) - 1 then workingDays else S.insert day workingDays
       in
         ({ model | workingDays = newWorkingDays }, Cmd.none)
 

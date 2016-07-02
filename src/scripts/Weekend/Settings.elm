@@ -8,10 +8,10 @@ type alias Settings =
   { mode : String
   , lang: Language
   , workingDays : List Day
-  , startHour : Int
-  , startMinute : Int
-  , endHour : Int
-  , endMinute : Int
+  , startHour : Maybe Int
+  , startMinute : Maybe Int
+  , endHour : Maybe Int
+  , endMinute : Maybe Int
   }
 
 fromModel : Model -> Settings
