@@ -99,7 +99,7 @@ workingTimeView value isValid inputHandler =
       Nothing -> ""
     classes = classList [("settings_working-time-field", True), ("m-invalid", not isValid)]
   in
-    input [ type' "text", classes, defaultValue valueStr, onInput inputHandler ] []
+    input [ type' "text", classes, defaultValue valueStr, maxlength 2, attribute "inputmode" "numeric", onInput inputHandler ] []
 
 workingDaysView : Language -> S.Set Day -> Html Msg
 workingDaysView lang days =
