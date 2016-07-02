@@ -2,6 +2,7 @@ module Weekend.Counter exposing (counterView)
 
 import Maybe as M
 import List as L
+import List.Extra as LE
 import Set as S
 import Date as D
 import Date.Extra.Period as DEP
@@ -11,7 +12,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Weekend.Model exposing (Model, Mode(..), Language, defaultEndHour, defaultEndMinute)
 import Weekend.Msg exposing (Msg(..))
-import Weekend.Day exposing (Day, nextDay, dateToDay)
+import Weekend.Day exposing (Day, days, nextDay, dateToDay)
 import Weekend.I18n exposing (t)
 import Weekend.Countdown exposing (countdownView)
 import Weekend.Percent exposing (percentView)
@@ -46,6 +47,17 @@ weekendStart workingDays endHour endMinute now =
   in
     DEP.add DEP.Minute endMinute <| DEP.add DEP.Hour endHour <| startOfLastDay
 
+workingDaysInARow : S.Set Day -> D.Date -> Int
+workingDaysInARow workingDays now =
+  let
+    isWorkingDay = flip S.member <| workingDays
+    today = dateToDay now
+    (before, after) = LE.break ((==) today) <| L.concat <| L.repeat 3 days
+    beforeCount = L.length <| LE.takeWhileEnd isWorkingDay before
+    afterCount = L.length <| LE.takeWhile isWorkingDay after
+  in
+    beforeCount + afterCount
+
 counterView : Model -> Html Msg
 counterView model =
   let
@@ -55,7 +67,7 @@ counterView model =
     weekend = weekendStart workingDays endHour endMinute date
     modeView = case mode of
       Countdown -> countdownView
-      Percent -> percentView
+      Percent -> percentView <| workingDaysInARow workingDays date
     mainView = if isWeekend workingDays endHour endMinute date then
       weekendView lang
     else

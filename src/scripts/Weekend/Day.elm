@@ -1,4 +1,4 @@
-module Weekend.Day exposing (Day, mon, tue, wed, thu, fri, sat, sun, days, nextDay, dayOfWeekToDay, dayToDayOfWeek, dateToDay)
+module Weekend.Day exposing (Day, mon, tue, wed, thu, fri, sat, sun, days, prevDay, nextDay, dayOfWeekToDay, dayToDayOfWeek, dateToDay)
 
 import Date as D
 import Dict as Dict
@@ -37,16 +37,13 @@ daysOfWeek : List D.Day
 daysOfWeek =
   [D.Mon, D.Tue, D.Wed, D.Thu, D.Fri, D.Sat, D.Sun]
 
+prevDay : Day -> Day
+prevDay day =
+  LE.takeWhile ((==) day) days |> LE.last |> M.withDefault mon
+
 nextDay : Day -> Day
 nextDay day =
-  let
-    nextDay' day days =
-      case days of
-        today :: tomorrow :: rest ->
-          if today == day then tomorrow else nextDay' day (tomorrow :: rest)
-        _ -> mon
-  in
-    nextDay' day days
+  LE.takeWhileEnd ((==) day) days |> L.head |> M.withDefault mon
 
 dayOfWeekToDay : D.Day -> Day
 dayOfWeekToDay dayOfWeek =
