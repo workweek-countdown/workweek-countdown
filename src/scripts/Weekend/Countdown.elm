@@ -17,16 +17,16 @@ countdownView now weekend =
     millisecondsLeft = left % DEC.ticksASecond
   in
     div [ class "countdown" ]
-      [ countdownPartView daysLeft 1
-      , countdownPartView hoursLeft 2
-      , countdownPartView minutesLeft 2
-      , countdownPartView secondsLeft 2
-      , countdownPartView millisecondsLeft 2
+      [ countdownPartView daysLeft 1 1
+      , countdownPartView hoursLeft 2 2
+      , countdownPartView minutesLeft 2 2
+      , countdownPartView secondsLeft 2 2
+      , countdownPartView millisecondsLeft 3 2
       ]
 
-countdownPartView : Int -> Int -> Html msg
-countdownPartView left digitsCount =
+countdownPartView : Int -> Int -> Int -> Html msg
+countdownPartView left total digitsCount =
   let
-    content = left |> toString |> S.left digitsCount |> S.padLeft digitsCount '0'
+    content = left |> toString |> S.padLeft total '0' |> S.left digitsCount
   in
     div [ class "countdown_part" ] [ text content ]
