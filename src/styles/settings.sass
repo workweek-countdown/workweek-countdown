@@ -1,14 +1,32 @@
 .settings
   font-size: 20px
+  width: 100%
+  max-width: 60%
 
-  &_working-day
-    cursor: pointer
-    margin-bottom: 5px
-    -webkit-user-select: none
+  &_working
+    &-day
+      cursor: pointer
+      margin-bottom: 5px
+      -webkit-user-select: none
 
-    &::before
-      content: '⊡'
-
-    &.m-active
       &::before
-        content: '🗹'
+        content: '⊡'
+
+      &.m-active
+        &::before
+          content: '🗹'
+
+    &-time
+      display: flex
+      input
+        width: 25%
+        padding: 10px
+        border: 1px solid #adadad
+        background-color: transparent
+        font-size: 16px
+        outline: none
+        margin-left: -1px
+        max-width: 60px
+
+        &:nth-of-type(2)
+          margin-right: 20px
