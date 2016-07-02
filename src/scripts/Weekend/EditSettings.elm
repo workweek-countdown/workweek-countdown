@@ -86,7 +86,7 @@ workingTimeGroupView title hour minute changeHour changeMinute =
       [ div [ class "settings_working-time-title" ] [ text title ]
       , div [ class "settings_working-time-fields" ]
           [ workingTimeView hour (isValidHour hour) (parseInput changeHour)
-          , text ":"
+          , div [ class "settings_working-time-separator" ] [ text ":" ]
           , workingTimeView minute (isValidMinute minute) (parseInput changeMinute)
           ]
       ]
