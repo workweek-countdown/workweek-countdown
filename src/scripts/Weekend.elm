@@ -79,7 +79,10 @@ update action model =
       (model, loadSettings ())
 
     SaveSettings ->
-      ({ model | firstStart = False }, saveSettings (fromModel model))
+      let
+        newModel = { model | firstStart = False }
+      in
+        (newModel, saveSettings (fromModel newModel))
 
     LoadSettingsAndChangeRoute route ->
       model ! []
