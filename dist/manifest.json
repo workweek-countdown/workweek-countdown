@@ -3,7 +3,7 @@
   "name": "Workweek Countdown",
   "short_name": "Workweek CD",
   "description": "A countdown clock to count the time left until a weekend. Helps you to answer this question quickly, so you can get back to work",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "icons": {
     "16": "icon16.png",
     "48": "icon48.png",
